@@ -1,33 +1,33 @@
 import { supabase } from "./client";
 
 export async function passwordSignIn(email: string, password: string) {
-  const { user, error } = await supabase.auth.signIn({ email, password });
-  return { userId: user?.id, error };
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  return { userId: data.user?.id, error };
 }
 
 export async function oauthSignIn() {
-  return supabase.auth.signIn({ provider: "github" });
+  return supabase.auth.signInWithOAuth({ provider: "github" });
 }
 
 export async function magicLinkSignIn(email: string) {
-  return supabase.auth.signIn({ email });
+  return supabase.auth.signInWithOtp({ email });
 }
 
-export function currentSession() {
-  const session = supabase.auth.session();
-  return session?.access_token;
+export async function currentSession() {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token;
 }
 
-export function currentUser() {
-  const user = supabase.auth.user();
-  return user?.id;
+export async function currentUser() {
+  const { data } = await supabase.auth.getUser();
+  return data.user?.id;
 }
 
 export async function updateLegacyUser(name: string) {
-  const { user, error } = await supabase.auth.update({ data: { name } });
-  return { user, error };
+  const { data, error } = await supabase.auth.updateUser({ data: { name } });
+  return { user: data.user, error };
 }
 
 export async function resetLegacyPassword(email: string) {
-  return supabase.auth.api.resetPasswordForEmail(email);
+  return supabase.auth.resetPasswordForEmail(email);
 }

@@ -4,5 +4,5 @@ import { createClient } from "@supabase/supabase-js";
 export const supabase = createClient(
   process.env.SUPABASE_URL ?? "https://public-sandbox.invalid",
   process.env.SUPABASE_ANON_KEY ?? "public-sandbox-placeholder-never-use-real-keys",
-  { autoRefreshToken: false, persistSession: false },
+  { auth: { persistSession: false } },
 );

@@ -2,9 +2,13 @@ import { supabase } from "./client";
 
 export function subscribeToTasks(onChange: (record: unknown) => void) {
   const subscription = supabase
-    .from("sandbox_tasks")
-    .on("*", (payload) => onChange(payload.new))
+    .channel("sandbox_tasks")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "sandbox_tasks" },
+      (payload) => onChange(payload.new)
+    )
     .subscribe();
 
-  return () => subscription.unsubscribe();
+  return () => supabase.removeChannel(subscription);
 }
